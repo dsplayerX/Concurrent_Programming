@@ -85,18 +85,18 @@ public class TransactionSystem {
                 secondLock.lock();
                 try {
                     try {
-                        // withdraw from the source
+                        Transaction transaction = new Transaction(fromAccountId, toAccountId, amount, false);
+
+                        // withdraw from the source, with
                         fromAccount.withdraw(amount);
                         withdrawalSuccessful = true;
+                        fromAccount.addTransaction(transaction);
 
                         // deposit into the destination
                         toAccount.deposit(amount);
                         depositSuccessful = true;
-
-                        // add transaction logs
-                        Transaction transaction = new Transaction(fromAccountId, toAccountId, amount, false);
-                        fromAccount.addTransaction(transaction);
                         toAccount.addTransaction(transaction);
+
 
                         System.out.println(threadName + " Transfer of $" + String.format("%.2f", amount) + " completed successfully.");
                         return true;

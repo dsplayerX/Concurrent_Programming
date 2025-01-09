@@ -1,3 +1,5 @@
+import exceptions.AccountNotFoundException;
+import exceptions.InvalidTransactionException;
 import exceptions.TransactionLockException;
 
 import java.util.List;
@@ -48,7 +50,8 @@ public class TransactionSystem {
      */
     public boolean transfer(int fromAccountId, int toAccountId, double amount) {
         String threadName = Thread.currentThread().getName();
-        System.out.println(threadName + " Starting transfer of $" + String.format("%.2f", amount) + " from Account " + fromAccountId +
+        System.out.println(threadName + " Starting transfer of $" + String.format("%.2f", amount) + " from Account " +
+                fromAccountId +
                 " to Account " + toAccountId);
 
         BankAccount fromAccount = getAccount(fromAccountId);
@@ -56,19 +59,24 @@ public class TransactionSystem {
 
         // if either account not found return false
         if (fromAccount == null || toAccount == null) {
-            System.err.println(threadName + " Error: Transfer aborted due to missing account(s).");
+            if (fromAccount == null)
+                System.err.println(threadName +  new AccountNotFoundException(fromAccountId).getMessage());
+            if (toAccount == null)
+                System.err.println(threadName + new AccountNotFoundException(toAccountId).getMessage());
             return false;
         }
 
         // if the source and destination accounts are the same return false
         if (fromAccountId == toAccountId) {
-            System.err.println(threadName + " Error: Source and destination accounts cannot be the same.");
+            System.err.println(threadName +
+                    new InvalidTransactionException("Cannot transfer money to the same account.").getMessage());
             return false;
         }
 
         // if the amount is less than or equal to 0 return false
         if (amount <= 0) {
-            System.err.println(threadName + " Error: Transfer amount must be positive.");
+            System.err.println(threadName + " " +
+                    new InvalidTransactionException("Transfer amount must be greater than 0.").getMessage());
             return false;
         }
 
@@ -87,7 +95,7 @@ public class TransactionSystem {
                     try {
                         Transaction transaction = new Transaction(fromAccountId, toAccountId, amount, false);
 
-                        // withdraw from the source, with
+                        // withdraw from the source
                         fromAccount.withdraw(amount);
                         withdrawalSuccessful = true;
                         fromAccount.addTransaction(transaction);
@@ -97,8 +105,8 @@ public class TransactionSystem {
                         depositSuccessful = true;
                         toAccount.addTransaction(transaction);
 
-
-                        System.out.println(threadName + " Transfer of $" + String.format("%.2f", amount) + " completed successfully.");
+                        System.out.println(threadName + " Transfer of $" + String.format("%.2f", amount) +
+                                " completed successfully.");
                         return true;
                     } catch (Exception e) {
                         System.err.println(threadName + " Error during transfer: " + e.getMessage());
@@ -123,14 +131,14 @@ public class TransactionSystem {
     /**
      * Roll back a transaction by reversing the deposit and withdrawal.
      *
-     * @param fromAccount           the source account
-     * @param toAccount             the destination account
-     * @param amount                the amount of the transaction
-     * @param withdrawalSuccessful  true if the withdrawal was successful, false otherwise
-     * @param depositSuccessful     true if the deposit was successful, false otherwise
+     * @param fromAccount          the source account
+     * @param toAccount            the destination account
+     * @param amount               the amount of the transaction
+     * @param withdrawalSuccessful true if the withdrawal was successful, false otherwise
+     * @param depositSuccessful    true if the deposit was successful, false otherwise
      */
     private void reverseTransaction(BankAccount fromAccount, BankAccount toAccount, double amount,
-                          boolean withdrawalSuccessful, boolean depositSuccessful) {
+                                    boolean withdrawalSuccessful, boolean depositSuccessful) {
         String threadName = Thread.currentThread().getName();
 
         try {

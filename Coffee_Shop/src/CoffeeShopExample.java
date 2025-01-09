@@ -8,7 +8,7 @@ import java.util.Random;
  */
 public class CoffeeShopExample {
     public static void main(String[] args) {
-        CoffeeShop coffeeShop = new CoffeeShop(3); // Queue capacity is 2
+        CoffeeShop coffeeShop = new CoffeeShop(3); // Queue capacity is 3
 
         // Drinks menu
         List<String> drinks = Arrays.asList("Latte", "Cappuccino", "Espresso", "Americano", "Macchiato", "Mocha", "Flat White", "Cold Brew");

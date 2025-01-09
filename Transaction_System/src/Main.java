@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +13,7 @@ public class Main {
         // Create transaction system
         TransactionSystem transactionSystem = new TransactionSystem(accounts);
 
-        Thread[] threads = new Thread[4]; // Array to hold all threads
+        Thread[] threads = new Thread[7]; // Array to hold all threads
 
         // Create threads for transactions
         Thread thread1 = new Thread(() -> {
@@ -40,14 +39,14 @@ public class Main {
         threads[3] = thread4;
 
         // Invalid transactions for demo
-//        Thread thread5 = new Thread(() -> transactionSystem.transfer(3, 1, 100000), "Thread 3"); // Insufficient funds
-//        threads[4] = thread5;
-//
-//        Thread thread6 = new Thread(() -> transactionSystem.transfer(1, 999, 1000), "Thread 4"); // Invalid account
-//        threads[5] = thread6;
-//
-//        Thread thread7 = new Thread(() -> transactionSystem.transfer(1, 2, -1000), "Thread 5"); // Invalid transfer amount
-//        threads[6] = thread7;
+        Thread thread5 = new Thread(() -> transactionSystem.transfer(3, 1, 100000), "Thread 5"); // Insufficient funds
+        threads[4] = thread5;
+
+        Thread thread6 = new Thread(() -> transactionSystem.transfer(1, 999, 1000), "Thread 6"); // Invalid account
+        threads[5] = thread6;
+
+        Thread thread7 = new Thread(() -> transactionSystem.transfer(1, 2, -1000), "Thread 7"); // Invalid transfer amount
+        threads[6] = thread7;
 
          // Start threads
         for

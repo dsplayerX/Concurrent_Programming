@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 public class FloorBathroom {
 
     private static final int NUM_STALLS = 6;  // Number of bathroom stalls
-    private static final int NUM_USERS = 100; // Total number of users
+    private static final int NUM_EMPLOYEES = 100; // Total number of users
     private static final Semaphore stallAccess = new Semaphore(NUM_STALLS, true); // to manage stall access
     private static final ConcurrentHashMap<Integer, Boolean> availableStalls = new ConcurrentHashMap<>();
     // to track which stalls are available (true = available, false = occupied)
@@ -74,12 +74,12 @@ public class FloorBathroom {
         if (NUM_STALLS <= 0) {
             throw new IllegalArgumentException("Number of stalls must be greater than 0. Provided: " + NUM_STALLS);
         }
-        if (NUM_USERS <= 0) {
+        if (NUM_EMPLOYEES <= 0) {
             throw new IllegalArgumentException(
-                    "Number of bathroom users must be greater than 0. Provided: " + NUM_USERS);
+                    "Number of bathroom users must be greater than 0. Provided: " + NUM_EMPLOYEES);
         }
 
-        Thread[] users = new Thread[NUM_USERS];
+        Thread[] users = new Thread[NUM_EMPLOYEES];
 
         // Initialize the stalls
         for (int i = 0; i < NUM_STALLS; i++) {
@@ -88,8 +88,8 @@ public class FloorBathroom {
 
         // Create BathroomUser threads
         Random random = new Random();
-        for (int i = 0; i < NUM_USERS; i++) {
-            users[i] = new Thread(new BathroomUser(), "User " + (i + 1));
+        for (int i = 0; i < NUM_EMPLOYEES; i++) {
+            users[i] = new Thread(new BathroomUser(), "Employee " + (i + 1));
 
             // Start threads at random intervals
             try {
